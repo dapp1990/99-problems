@@ -1,4 +1,4 @@
-% Run-length encoding of a list.
+% Modified run-length encoding.
 % Use the result of problem p09 to 
 % implement the so-called run-length 
 % encoding data compression method. 
@@ -7,16 +7,29 @@
 % is the number of duplicates of the 
 % element E.
 
-encode([First|Rest],Result) :- encode(Rest,[1,First],[],Result).
+% Problem P09
+pack([First|Rest],Result) :- pack(Rest,[First],[],Result).
 
-encode([],Last,SubTotal,Result) :-
+pack([],Last,SubTotal,Result) :-
     append([Last],SubTotal,RR),
     reverse(RR,Result).
-encode([E1|Rest],[Counter,Current],SubResult,Result) :-
-    (   E1 == Current ->
-    	NewCounter is Counter + 1,
-        encode(Rest,[NewCounter,Current],SubResult,Result)
+pack([E1|Rest],Current,SubResult,Result) :-
+    (   member(E1,Current) -> 
+	    append([E1],Current,Current2),
+        pack(Rest,Current2,SubResult, Result)
     ;  
-        append([[Counter,Current]],SubResult,SubResult2),
-        encode(Rest,[1,E1],SubResult2,Result)
+        append([Current],SubResult,SubResult2),
+        pack(Rest,[E1],SubResult2, Result)
     ).
+
+% Problem P10
+encode(List,Result) :- 
+    pack(List,PackedList), 
+    helper(PackedList,Result).
+
+helper([],[]).
+helper([Xs|Xss],Result) :- 
+    length(Xs,Amount),
+    last(Xs,X),
+    helper(Xss,Results),
+    append([[Amount,X]],Results,Result).
