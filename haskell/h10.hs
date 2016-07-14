@@ -2,6 +2,8 @@
 -- the so-called run-length encoding data compression method. Consecutive 
 -- duplicates of elements are encoded as lists (N E) where N is the number of 
 -- duplicates of the element E.
+module H10 where
+
 import H09
 
 encode :: (Eq a) => [a] -> [(Int,a)]
